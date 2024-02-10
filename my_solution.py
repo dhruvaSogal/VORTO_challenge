@@ -40,6 +40,8 @@ def gen_naive_solution(points_list):
     for i in range (1, num_drivers + 1):
         list = [int(i)]
         solution.append(list)
+    # for item in solution:
+    #     print(item)
     return solution
 
 def distance(point1, point2):
@@ -68,22 +70,26 @@ def calc_solution_cost(points_list, solution):
     total_cost += 500*len(solution)
     return total_cost
 
-gen_naive_solution(read_file())
 
 def swap_and_shift_elements(points_list, solution):
     # pick a set of two arrays, randomly add one element of one to another, swapping if needed to stay legal
     solution_copy = solution.copy()
     array1, array2 = random.sample(solution_copy, 2)
     pair_to_move = random.choice(array1)
+    array2.append(pair_to_move)
+    array1.remove(pair_to_move)
     if not annealing_constraint(points_list, array2):
-        array2.append(pair_to_move)
-        array1.remove(pair_to_move)
         solution_copy = [route for route in solution if route]
+    else:
+        array1.append(pair_to_move)
+        array2.remove(pair_to_move)
     return solution_copy
-def annealing_constraint(points_list,route):
+
+def annealing_constraint(points_list, route):
     if calc_route_cost(points_list, route) <= 720:
         return False
     return True
+
 def simulated_annealing(points_list):
     initial_temp = 100.0
     cooling_rate = 0.01
@@ -109,5 +115,5 @@ def simulated_annealing(points_list):
         initial_temp *= (1 - cooling_rate)
     for item in best_state:
         print(item)
-
+    return 0
 simulated_annealing(read_file())
