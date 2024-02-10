@@ -1,6 +1,6 @@
 import math
 import sys
-
+import random
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -71,5 +71,18 @@ def calc_solution_cost(points_list, solution):
     total_cost += 500*len(solution)
     return total_cost
 
-print(calc_solution_cost(read_file(), gen_naive_solution(read_file())))
-#gen_naive_solution(read_file())
+gen_naive_solution(read_file())
+
+def swap_and_shift_elements(solution):
+    # pick a set of two arrays, randomly add one element of one to another, swapping if needed to stay legal
+
+    array1, array2 = random.sample(solution, 2)
+    pair_to_move = random.choice(array1)
+    array2.append(pair_to_move)
+    array1.remove(pair_to_move)
+    solution = [route for route in solution if route]
+
+def annealing_constraint(points_list,route):
+    if calc_route_cost(points_list, route) > 720:
+        return False
+    return True
