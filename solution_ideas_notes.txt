@@ -1,0 +1,18 @@
+Goal: Minimize Cost
+Objective Function: (500*num_drivers) + total_number_of_driven_minutes
+Constraints: Within 12 hours for each driver to get from start to finish
+Observations:
+    Fastest way to get to each point and back from (0,0) is a straight line
+        since driver penalty is 500 this is not always best solution
+Tools:
+    Tool |  Issues, things to learn, etc.
+
+    TSP                        | Constraints, factors other than distance
+    GA                         | Need to find way to model constraints, good python library (scipy?). Have to come up with initial guess within constraints every time
+    SA                         | Same as GA 
+    ACO                        | Research Algorithm, probably similar to ^^
+    Write my own heuristic     | Runtime, time consuming
+
+    
+    
+    
