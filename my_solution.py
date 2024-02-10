@@ -40,9 +40,6 @@ def gen_naive_solution(points_list):
     for i in range (1, num_drivers + 1):
         list = [int(i)]
         solution.append(list)
-
-    for item in solution:
-        print(item)
     return solution
 
 def distance(point1, point2):
@@ -73,16 +70,44 @@ def calc_solution_cost(points_list, solution):
 
 gen_naive_solution(read_file())
 
-def swap_and_shift_elements(solution):
+def swap_and_shift_elements(points_list, solution):
     # pick a set of two arrays, randomly add one element of one to another, swapping if needed to stay legal
-
-    array1, array2 = random.sample(solution, 2)
+    solution_copy = solution.copy()
+    array1, array2 = random.sample(solution_copy, 2)
     pair_to_move = random.choice(array1)
-    array2.append(pair_to_move)
-    array1.remove(pair_to_move)
-    solution = [route for route in solution if route]
-
+    if annealing_constraint(points_list, array2):
+        array2.append(pair_to_move)
+        array1.remove(pair_to_move)
+        solution_copy = [route for route in solution if route]
+    return solution_copy
 def annealing_constraint(points_list,route):
-    if calc_route_cost(points_list, route) > 720:
+    if calc_route_cost(points_list, route) <= 720:
         return False
     return True
+def simulated_annealing(points_list):
+    initial_temp = 100.0
+    cooling_rate = 0.01
+    num_iter = 1000
+    current_state = gen_naive_solution(points_list)
+    current_score = calc_solution_cost(points_list, current_state)
+
+    best_state = current_state
+    best_score = current_score
+
+    for i in range(num_iter):
+        new_state = swap_and_shift_elements(points_list, current_state)
+        new_score = calc_solution_cost(points_list, new_state)
+        p_acceptance = math.exp((current_score - new_score) / initial_temp)
+
+        if new_score < current_score or p_acceptance >= random.random():
+            current_state = new_state
+            current_score = new_score
+        if new_score < best_score:
+            best_state = new_state
+            best_score = new_score
+    
+        initial_temp *= (1 - cooling_rate)
+    for item in best_state:
+        print(item)
+
+simulated_annealing(read_file())
