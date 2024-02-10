@@ -75,7 +75,7 @@ def swap_and_shift_elements(points_list, solution):
     solution_copy = solution.copy()
     array1, array2 = random.sample(solution_copy, 2)
     pair_to_move = random.choice(array1)
-    if annealing_constraint(points_list, array2):
+    if not annealing_constraint(points_list, array2):
         array2.append(pair_to_move)
         array1.remove(pair_to_move)
         solution_copy = [route for route in solution if route]
