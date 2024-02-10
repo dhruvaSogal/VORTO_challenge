@@ -1,6 +1,7 @@
 import math
 import sys
-def read_file_to_dict():
+
+def read_file():
     file = sys.argv[1]
     points_list = []
     try:
@@ -17,5 +18,16 @@ def read_file_to_dict():
     return points_list
 
 
-print(read_file_to_dict())
+def gen_naive_solution(points_list):
+    num_drivers = len(points_list)
+    solution = []
+    for i in range (1, num_drivers):
+        list = [int(i)]
+        solution.append(list)
+
+    for item in solution:
+        print(item)
+
+gen_naive_solution(read_file())  
+
     
