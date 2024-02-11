@@ -46,7 +46,19 @@ def gen_naive_solution(points_list):
 def gen_starting_solution(points_list):
     initial = gen_naive_solution(points_list)
     initial = sorted(initial, key = lambda x: calc_route_cost(points_list, x)) 
-    print(initial)
+    # try to combine the smallest bins to the smallest to eliminate drivers
+    initial_bin = 0
+    for idx, route in enumerate(initial):
+        if initial_bin == idx:
+            continue
+        check_route = initial[initial_bin] + route
+        if not annealing_constraint(points_list, check_route):
+            initial[initial_bin].extend(route)
+            initial.remove(route)
+        else:
+            initial_bin += 1
+    return initial
+
 
 def distance(point1, point2):
     return math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2)
@@ -99,7 +111,7 @@ def simulated_annealing(points_list):
     initial_temp = 200.0
     cooling_rate = 0.01
     num_iter = 30000
-    current_state = gen_naive_solution(points_list)
+    current_state = gen_starting_solution(points_list)
     current_score = calc_solution_cost(points_list, current_state)
 
     best_state = current_state
