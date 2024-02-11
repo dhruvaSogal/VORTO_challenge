@@ -98,6 +98,7 @@ def swap_and_shift_elements(points_list, solution):
     if annealing_constraint(points_list, array2):
         array1.append(pair_to_move)
         array2.remove(pair_to_move)
+        return solution
 
     solution_copy = [route for route in solution_copy if route]
     return solution_copy
@@ -131,9 +132,9 @@ def switch_or_add_new(points_list, solution):
 
 
 def simulated_annealing(points_list):
-    initial_temp = 500.0
-    cooling_rate = 0.01
-    num_iter = 30000
+    initial_temp = 200.0
+    cooling_rate = 0.05
+    num_iter = 31000
     current_state = gen_naive_solution(points_list)
     current_score = calc_solution_cost(points_list, current_state)
 
@@ -143,6 +144,9 @@ def simulated_annealing(points_list):
     multiple_stops = any(len(route) > 1 for route in current_state)
 
     for i in range(num_iter):
+        if i == 1000:
+            initial_temp = 200.0
+            cooling_rate = 0.05
         p_switch_or_new = 0
         if multiple_stops:
             p_switch_or_new = 0.2
@@ -164,6 +168,7 @@ def simulated_annealing(points_list):
             best_score = new_score
     
         initial_temp *= (1 - cooling_rate)
+        multiple_stops = any(len(route) > 1 for route in current_state)
     for item in best_state:
         print(item)
     return 0
