@@ -41,9 +41,12 @@ def gen_naive_solution(points_list):
     for i in range (1, num_drivers + 1):
         list = [int(i)]
         solution.append(list)
-    # for item in solution:
-    #     print(item)
     return solution
+
+def gen_starting_solution(points_list):
+    initial = gen_naive_solution(points_list)
+    initial = sorted(initial, key = lambda x: calc_route_cost(points_list, x)) 
+    print(initial)
 
 def distance(point1, point2):
     return math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2)
@@ -93,7 +96,7 @@ def annealing_constraint(points_list, route):
     return True
 
 def simulated_annealing(points_list):
-    initial_temp = 100.0
+    initial_temp = 200.0
     cooling_rate = 0.01
     num_iter = 30000
     current_state = gen_naive_solution(points_list)
@@ -109,7 +112,6 @@ def simulated_annealing(points_list):
 
         p_acceptance = math.exp((-1 * abs(current_score - new_score)) / initial_temp)
         
-
         if new_score < current_score or p_acceptance >= random.random():
             current_state = new_state
             current_score = new_score
