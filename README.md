@@ -1,4 +1,5 @@
-# Solution File: my_solution.py
+## Solution: my_solution.py
+## Run with python3 my_solution.py <file>. All modules are builtin
 ## Solution Summary:
 ### -Utilizing Simulated Annealing Approach  
 
