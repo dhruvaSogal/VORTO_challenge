@@ -1,6 +1,7 @@
 import math
 import sys
 import random
+import copy
 class Point:
     def __init__(self, x, y):
         self.x = x
@@ -72,17 +73,18 @@ def calc_solution_cost(points_list, solution):
 
 
 def swap_and_shift_elements(points_list, solution):
-    # pick a set of two arrays, randomly add one element of one to another, swapping if needed to stay legal
-    solution_copy = solution.copy()
+    # pick a set of two arrays, randomly add one element of one to another
+    solution_copy = copy.deepcopy(solution)
     array1, array2 = random.sample(solution_copy, 2)
     pair_to_move = random.choice(array1)
     array2.append(pair_to_move)
     array1.remove(pair_to_move)
-    if not annealing_constraint(points_list, array2):
-        solution_copy = [route for route in solution if route]
-    else:
+
+    if annealing_constraint(points_list, array2):
         array1.append(pair_to_move)
         array2.remove(pair_to_move)
+
+    solution_copy = [route for route in solution_copy if route]
     return solution_copy
 
 def annealing_constraint(points_list, route):
@@ -103,7 +105,10 @@ def simulated_annealing(points_list):
     for i in range(num_iter):
         new_state = swap_and_shift_elements(points_list, current_state)
         new_score = calc_solution_cost(points_list, new_state)
-        p_acceptance = math.exp((current_score - new_score) / initial_temp)
+
+
+        if new_score >= current_score:
+            p_acceptance = math.exp((current_score - new_score) / initial_temp)
 
         if new_score < current_score or p_acceptance >= random.random():
             current_state = new_state
