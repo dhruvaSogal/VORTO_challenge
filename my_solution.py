@@ -131,11 +131,13 @@ def switch_or_add_new(points_list, solution):
     return solution_copy
 
 def shuffle_all(points_list, solution):
-    for route in solution:
-        route_copy = copy.deepcopy(route)
+    while True:
+        route_copy = copy.deepcopy(random.choice(solution))
         random.shuffle(route_copy)
         if not annealing_constraint(points_list, route_copy):
             route = route_copy
+            break
+    return solution
 
 
 def simulated_annealing(points_list, num_iter, starting_sol):
@@ -143,7 +145,7 @@ def simulated_annealing(points_list, num_iter, starting_sol):
     cooling_rate = 0.01
     current_state = starting_sol
     current_score = calc_solution_cost(points_list, current_state)
-    p_shuffel_all = 0.5
+    p_shuffel_all = 0.3
     best_state = current_state
     best_score = current_score
     new_state = []
@@ -158,10 +160,9 @@ def simulated_annealing(points_list, num_iter, starting_sol):
             new_state = swap_and_shift_elements(points_list, current_state)
 
         if p_shuffel_all >= random.random():
-            shuffle_all(points_list, current_state)
+            current_state = shuffle_all(points_list, current_state)
 
         new_score = calc_solution_cost(points_list, new_state)
-
 
         p_acceptance = math.exp((-1 * abs(current_score - new_score)) / initial_temp)
         
@@ -185,6 +186,6 @@ def print_sol(sol):
 
 
 points_list = read_file()
-starting = simulated_annealing(points_list, 15000, gen_naive_solution(points_list))
-print_sol(simulated_annealing(points_list, 20000, starting))
+starting = simulated_annealing(points_list, 5000, gen_naive_solution(points_list))
+print_sol(simulated_annealing(points_list, 25000, starting))
 
