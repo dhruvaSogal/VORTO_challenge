@@ -54,18 +54,45 @@ def calc_route_cost(points_list, route):
     total_distance += distance(current_point, home)
     return total_distance
 
-def calc_solution_cost(points_list, solution):
+def calc_solution_cost(points_list, vars):
+    solution = build_solution_from_vars(vars, len(points_list))
     total_cost = 0.0
     for route in solution:
         total_cost += calc_route_cost(points_list, route)
     total_cost += 500*len(solution)
     return total_cost
 
+def build_solution_from_vars(vars, max):
+    routes = []
+    added = set()
+    for n in range(1, max):
+        if not (n in added):
+            routes.append([n])
+            added.add(n)
+        for k in range(1, max):
+            if k != n:
+                if vars.get((n, k), True) and not (k in added):
+                    routes[n - 1].append(k)
+                    added.add(k)
+    return routes    
+
 def linear_programming(points_list):
     prob = LpProblem('VRP', LpMinimize)
+    vars = {}
+    for n in range(1, len(points_list) + 1):
+        for k in range(1, len(points_list) + 1):
+            if n != k:
+                vars[n,k] = (LpVariable(f"Same_{n}_{k}", cat="Binary"))
+
+    prob += calc_solution_cost(points_list, vars)
+    for n in range(1, len(points_list) + 1):
+        for k in range(1, len(points_list) + 1):
+            if n != k:
+                for p in range(1, len(points_list) + 1):
+                    if p != n and p != k:
+                        prob += vars[n, k] + vars[k, p] - 1 <= vars[n, p]
+    prob.solve()
+    for var in prob.variables():
+        print(var.name, "=", var.varValue)
     
-    Same = {(n, k): pulp.LpVariable(f"Same_{n}_{k}", cat="Binary") 
-            for n in range(1, len(points_list) + 1) 
-            for k in range(1, len(points_list) + 1) if n != k}
-    print(Same)
 linear_programming(read_file())
