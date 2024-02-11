@@ -131,10 +131,10 @@ def switch_or_add_new(points_list, solution):
 
 
 def simulated_annealing(points_list):
-    initial_temp = 200.0
+    initial_temp = 500.0
     cooling_rate = 0.01
     num_iter = 30000
-    current_state = gen_starting_solution(points_list)
+    current_state = gen_naive_solution(points_list)
     current_score = calc_solution_cost(points_list, current_state)
 
     best_state = current_state
@@ -145,7 +145,7 @@ def simulated_annealing(points_list):
     for i in range(num_iter):
         p_switch_or_new = 0
         if multiple_stops:
-            p_switch_or_new = 0.2        
+            p_switch_or_new = 0.2
         if p_switch_or_new >= random.random():
             new_state = switch_or_add_new(points_list, current_state)
         else:    
