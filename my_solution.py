@@ -95,7 +95,7 @@ def annealing_constraint(points_list, route):
 def simulated_annealing(points_list):
     initial_temp = 100.0
     cooling_rate = 0.01
-    num_iter = 1000
+    num_iter = 30000
     current_state = gen_naive_solution(points_list)
     current_score = calc_solution_cost(points_list, current_state)
 
@@ -107,8 +107,8 @@ def simulated_annealing(points_list):
         new_score = calc_solution_cost(points_list, new_state)
 
 
-        if new_score >= current_score:
-            p_acceptance = math.exp((current_score - new_score) / initial_temp)
+        p_acceptance = math.exp((-1 * abs(current_score - new_score)) / initial_temp)
+        
 
         if new_score < current_score or p_acceptance >= random.random():
             current_state = new_state
