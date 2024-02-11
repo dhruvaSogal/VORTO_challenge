@@ -107,6 +107,29 @@ def annealing_constraint(points_list, route):
         return False
     return True
 
+def switch_or_add_new(points_list, solution):
+
+    solution_copy = copy.deepcopy(solution)
+    p_switch = 0.7
+    # select a route with > 1 stop
+    eligible_lists = [route for route in solution_copy if len(route) > 1]
+    to_modify = random.sample(eligible_lists, 1)[0]
+    # Either switch the order or add a new driver
+    if p_switch >= random.random():
+        idx1,idx2 = 0,1
+        if(len(to_modify) > 2):
+            idx1,idx2 = random.sample(range(len(to_modify)), 2)
+        to_modify[idx1], to_modify[idx2] = to_modify[idx2], to_modify[idx1] 
+    else:
+        to_move = random.choice(to_modify)
+        l = []
+        l.append(to_move)
+        to_modify.remove(to_move)
+        solution_copy.append(l)
+    return solution_copy
+
+
+
 def simulated_annealing(points_list):
     initial_temp = 200.0
     cooling_rate = 0.01
@@ -116,9 +139,18 @@ def simulated_annealing(points_list):
 
     best_state = current_state
     best_score = current_score
+    new_state = []
+    multiple_stops = any(len(route) > 1 for route in current_state)
 
     for i in range(num_iter):
-        new_state = swap_and_shift_elements(points_list, current_state)
+        p_switch_or_new = 0
+        if multiple_stops:
+            p_switch_or_new = 0.2        
+        if p_switch_or_new >= random.random():
+            new_state = switch_or_add_new(points_list, current_state)
+        else:    
+            new_state = swap_and_shift_elements(points_list, current_state)
+
         new_score = calc_solution_cost(points_list, new_state)
 
 
